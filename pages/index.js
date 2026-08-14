@@ -63,10 +63,12 @@ export default function AppExpertRepairs() {
 
   const startNewOrder = () => {
     const orderNumber = `ORD-${new Date().getFullYear()}-${String(orders.length + 1).padStart(4, '0')}`;
+    const now = new Date();
+    const timestamp = now.toISOString().slice(0, 19).replace('T', ' ');
     setCurrentOrder({
       id: orderNumber,
       technician: technician,
-      timestamp: new Date().toLocaleString('es-ES'),
+      timestamp: timestamp,
       client: { name: '', phone: '', email: '' },
       device: { brand: '', model: '', imei: '', condition: '' },
       photos: [],

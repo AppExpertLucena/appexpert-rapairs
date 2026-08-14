@@ -1,4 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createBrowserClient } from '@supabase/ssr';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+const supabase = createBrowserClient(supabaseUrl, supabaseKey);
 
 export default function AppExpertRepairs() {
   const [screen, setScreen] = useState('login');
@@ -12,17 +18,29 @@ export default function AppExpertRepairs() {
   const [searchResults, setSearchResults] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem('appexpert_orders');
-    if (saved) setOrders(JSON.parse(saved));
+    loadOrders();
   }, []);
 
-  useEffect(() => {
-    if (orders.length > 0) {
-      localStorage.setItem('appexpert_orders', JSON.stringify(orders));
+  const loadOrders = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .order('timestamp', { ascending: false });
+
+      if (error) throw error;
+      setOrders(data || []);
+    } catch (error) {
+      console.error('Error loading orders:', error);
+      setOrders([]);
+    } finally {
+      setLoading(false);
     }
-  }, [orders]);
+  };
 
   const handleLogin = () => {
     if (technician.trim()) {
@@ -43,7 +61,7 @@ export default function AppExpertRepairs() {
       pin: '',
       diagnosis: '',
       signature: null,
-      status: 'completed',
+      status: 'pending',
     });
     setStep(0);
     setScreen('order');
@@ -109,33 +127,69 @@ export default function AppExpertRepairs() {
     }
   };
 
-  const captureSignature = () => {
+  const captureSignature = async () => {
     const canvas = canvasRef.current;
     if (canvas) {
-      const signature = canvas.toDataURL('image/png');
-      const completed = { ...currentOrder, signature, status: 'completed' };
-      setOrders([...orders, completed]);
-      setScreen('dashboard');
-      setCurrentOrder(null);
-      setStep(0);
+      setLoading(true);
+      try {
+        const signature = canvas.toDataURL('image/png');
+        const orderData = {
+          id: currentOrder.id,
+          technician: currentOrder.technician,
+          timestamp: currentOrder.timestamp,
+          client: currentOrder.client,
+          device: currentOrder.device,
+          photos: currentOrder.photos,
+          symptoms: currentOrder.symptoms,
+          pin_encrypted: currentOrder.pin,
+          signature: signature,
+          status: 'completed'
+        };
+
+        const { error } = await supabase
+          .from('orders')
+          .insert([orderData]);
+
+        if (error) throw error;
+
+        setScreen('dashboard');
+        setCurrentOrder(null);
+        setStep(0);
+        await loadOrders();
+      } catch (error) {
+        console.error('Error saving order:', error);
+        alert('Error guardando orden. Intenta de nuevo.');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
-  const handleSearch = (query) => {
+  const handleSearch = async (query) => {
     setSearchQuery(query);
     if (query.trim() === '') {
       setSearchResults([]);
       return;
     }
-    const lowerQuery = query.toLowerCase();
-    const results = orders.filter(
-      (order) =>
-        order.device.imei.toLowerCase().includes(lowerQuery) ||
-        order.client.phone.toLowerCase().includes(lowerQuery) ||
-        order.client.name.toLowerCase().includes(lowerQuery) ||
-        order.id.toLowerCase().includes(lowerQuery)
-    );
-    setSearchResults(results);
+
+    try {
+      const lowerQuery = query.toLowerCase();
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .or(
+          `id.ilike.%${query}%,` +
+          `client->phone.ilike.%${query}%,` +
+          `client->name.ilike.%${query}%,` +
+          `device->imei.ilike.%${query}%`
+        );
+
+      if (error) throw error;
+      setSearchResults(data || []);
+    } catch (error) {
+      console.error('Error searching:', error);
+      setSearchResults([]);
+    }
   };
 
   const downloadPDF = (order) => {

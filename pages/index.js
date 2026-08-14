@@ -431,7 +431,8 @@ export default function AppExpertRepairs() {
               </div>
               <button
                 onClick={() => {
-                  const techValue = technicianRef.current?.value || '';
+                  const techInput = document.querySelector('input[placeholder="Tu nombre"]');
+                  const techValue = techInput?.value || '';
                   if (techValue.trim()) {
                     setTechnician(techValue);
                     setScreen('dashboard');

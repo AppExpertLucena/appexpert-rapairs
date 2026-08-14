@@ -152,6 +152,22 @@ export default function AppExpertRepairs() {
 
         if (error) throw error;
 
+        // Enviar email
+        if (currentOrder.client.email) {
+          try {
+            await fetch('/api/send-email', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: currentOrder.client.email,
+                orderData: orderData
+              })
+            });
+          } catch (emailError) {
+            console.warn('Email send failed (non-blocking):', emailError);
+          }
+        }
+
         setScreen('dashboard');
         setCurrentOrder(null);
         setStep(0);

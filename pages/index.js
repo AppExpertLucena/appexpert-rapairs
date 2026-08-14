@@ -21,6 +21,7 @@ export default function AppExpertRepairs() {
   const [loading, setLoading] = useState(false);
 
   // Refs para capturar valores directamente del DOM
+  const technicianRef = useRef(null);
   const clientNameRef = useRef(null);
   const clientPhoneRef = useRef(null);
   const clientEmailRef = useRef(null);
@@ -419,17 +420,23 @@ export default function AppExpertRepairs() {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">Técnico</label>
                 <input
+                  ref={technicianRef}
                   type="text"
-                  value={technician}
-                  onChange={(e) => setTechnician(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+                  defaultValue={technician}
+                  onKeyPress={(e) => e.key === 'Enter' && (setTechnician(technicianRef.current?.value || ''), handleLogin())}
                   placeholder="Tu nombre"
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
                   autoFocus
                 />
               </div>
               <button
-                onClick={handleLogin}
+                onClick={() => {
+                  const techValue = technicianRef.current?.value || '';
+                  if (techValue.trim()) {
+                    setTechnician(techValue);
+                    setScreen('dashboard');
+                  }
+                }}
                 className="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2 px-4 rounded-lg transition"
               >
                 Entrar

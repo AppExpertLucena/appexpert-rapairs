@@ -134,31 +134,41 @@ export default function AppExpertRepairs() {
       try {
         const signature = canvas.toDataURL('image/png');
 
-        // Insertar cliente
+        // Insertar cliente con validación
+        if (!currentOrder.client.name || !currentOrder.client.phone) {
+          throw new Error('Cliente: nombre y teléfono son requeridos');
+        }
+
         const { data: clientData, error: clientError } = await supabase
           .from('clients')
           .insert([{
-            name: currentOrder.client.name,
-            phone: currentOrder.client.phone,
-            email: currentOrder.client.email
+            name: currentOrder.client.name || 'N/A',
+            phone: currentOrder.client.phone || 'N/A',
+            email: currentOrder.client.email || null
           }])
           .select();
 
         if (clientError) throw clientError;
+        if (!clientData || clientData.length === 0) throw new Error('Error insertando cliente');
         const clientId = clientData[0].id;
 
-        // Insertar dispositivo
+        // Insertar dispositivo con validación
+        if (!currentOrder.device.brand || !currentOrder.device.model) {
+          throw new Error('Dispositivo: marca y modelo son requeridos');
+        }
+
         const { data: deviceData, error: deviceError } = await supabase
           .from('devices')
           .insert([{
-            brand: currentOrder.device.brand,
-            model: currentOrder.device.model,
-            imei: currentOrder.device.imei,
-            condition: currentOrder.device.condition
+            brand: currentOrder.device.brand || 'N/A',
+            model: currentOrder.device.model || 'N/A',
+            imei: currentOrder.device.imei || null,
+            condition: currentOrder.device.condition || 'Desconocido'
           }])
           .select();
 
         if (deviceError) throw deviceError;
+        if (!deviceData || deviceData.length === 0) throw new Error('Error insertando dispositivo');
         const deviceId = deviceData[0].id;
 
         // Insertar orden
@@ -168,9 +178,9 @@ export default function AppExpertRepairs() {
           timestamp: currentOrder.timestamp,
           client_id: clientId,
           device_id: deviceId,
-          photos: currentOrder.photos,
-          symptoms: currentOrder.symptoms,
-          pin_encrypted: currentOrder.pin,
+          photos: currentOrder.photos && currentOrder.photos.length > 0 ? currentOrder.photos : null,
+          symptoms: currentOrder.symptoms || null,
+          pin_encrypted: currentOrder.pin || null,
           signature: signature,
           status: 'completed'
         };
@@ -180,6 +190,8 @@ export default function AppExpertRepairs() {
           .insert([orderData]);
 
         if (orderError) throw orderError;
+
+        console.log('Orden guardada exitosamente:', currentOrder.id);
 
         // Enviar email
         if (currentOrder.client.email) {
@@ -203,7 +215,7 @@ export default function AppExpertRepairs() {
         await loadOrders();
       } catch (error) {
         console.error('Error saving order:', error);
-        alert('Error guardando orden. Intenta de nuevo.');
+        alert('Error guardando orden: ' + error.message);
       } finally {
         setLoading(false);
       }

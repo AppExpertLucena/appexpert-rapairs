@@ -133,12 +133,41 @@ export default function AppExpertRepairs() {
       setLoading(true);
       try {
         const signature = canvas.toDataURL('image/png');
+
+        // Insertar cliente
+        const { data: clientData, error: clientError } = await supabase
+          .from('clients')
+          .insert([{
+            name: currentOrder.client.name,
+            phone: currentOrder.client.phone,
+            email: currentOrder.client.email
+          }])
+          .select();
+
+        if (clientError) throw clientError;
+        const clientId = clientData[0].id;
+
+        // Insertar dispositivo
+        const { data: deviceData, error: deviceError } = await supabase
+          .from('devices')
+          .insert([{
+            brand: currentOrder.device.brand,
+            model: currentOrder.device.model,
+            imei: currentOrder.device.imei,
+            condition: currentOrder.device.condition
+          }])
+          .select();
+
+        if (deviceError) throw deviceError;
+        const deviceId = deviceData[0].id;
+
+        // Insertar orden
         const orderData = {
           id: currentOrder.id,
           technician: currentOrder.technician,
           timestamp: currentOrder.timestamp,
-          client: currentOrder.client,
-          device: currentOrder.device,
+          client_id: clientId,
+          device_id: deviceId,
           photos: currentOrder.photos,
           symptoms: currentOrder.symptoms,
           pin_encrypted: currentOrder.pin,
@@ -146,11 +175,11 @@ export default function AppExpertRepairs() {
           status: 'completed'
         };
 
-        const { error } = await supabase
+        const { error: orderError } = await supabase
           .from('orders')
           .insert([orderData]);
 
-        if (error) throw error;
+        if (orderError) throw orderError;
 
         // Enviar email
         if (currentOrder.client.email) {

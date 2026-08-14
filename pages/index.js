@@ -658,9 +658,10 @@ export default function AppExpertRepairs() {
             <div className="flex gap-3">
               <button onClick={() => setScreen('dashboard')} className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition">Cancelar</button>
               <button onClick={() => {
-                const name = clientNameRef.current?.value || '';
-                const phone = clientPhoneRef.current?.value || '';
-                const email = clientEmailRef.current?.value || '';
+                const inputs = document.querySelectorAll('input[type="text"], input[type="tel"], input[type="email"]');
+                const name = inputs[0]?.value || '';
+                const phone = inputs[1]?.value || '';
+                const email = inputs[2]?.value || '';
                 if (name && phone) {
                   setCurrentOrder({ ...currentOrder, client: { name, phone, email } });
                   setStep(1);
@@ -721,10 +722,12 @@ export default function AppExpertRepairs() {
             <div className="flex gap-3">
               <button onClick={() => setStep(0)} className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition">Atrás</button>
               <button onClick={() => {
-                const brand = deviceBrandRef.current?.value || '';
-                const model = deviceModelRef.current?.value || '';
-                const imei = deviceImeiRef.current?.value || '';
-                const condition = deviceConditionRef.current?.value || '';
+                const selects = document.querySelectorAll('select');
+                const inputs = document.querySelectorAll('input[type="text"]');
+                const brand = selects[0]?.value || '';
+                const model = inputs[0]?.value || '';
+                const imei = inputs[1]?.value || '';
+                const condition = selects[1]?.value || '';
                 if (brand && model) {
                   setCurrentOrder({ ...currentOrder, device: { brand, model, imei, condition } });
                   setStep(2);

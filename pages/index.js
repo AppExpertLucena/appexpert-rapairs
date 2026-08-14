@@ -20,6 +20,18 @@ export default function AppExpertRepairs() {
   const [showSearch, setShowSearch] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Refs para capturar valores directamente del DOM
+  const clientNameRef = useRef(null);
+  const clientPhoneRef = useRef(null);
+  const clientEmailRef = useRef(null);
+  const deviceBrandRef = useRef(null);
+  const deviceModelRef = useRef(null);
+  const deviceImeiRef = useRef(null);
+  const deviceConditionRef = useRef(null);
+  const symptomsRef = useRef(null);
+  const diagnosisRef = useRef(null);
+  const pinRef = useRef(null);
+
   useEffect(() => {
     loadOrders();
   }, []);
@@ -605,9 +617,9 @@ export default function AppExpertRepairs() {
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">Nombre completo</label>
                   <input
+                    ref={clientNameRef}
                     type="text"
-                    value={currentOrder.client.name}
-                    onChange={(e) => setCurrentOrder({ ...currentOrder, client: { ...currentOrder.client, name: e.target.value } })}
+                    defaultValue={currentOrder.client.name}
                     placeholder="ej: Juan García López"
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
                     autoFocus
@@ -616,9 +628,9 @@ export default function AppExpertRepairs() {
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">Teléfono</label>
                   <input
+                    ref={clientPhoneRef}
                     type="tel"
-                    value={currentOrder.client.phone}
-                    onChange={(e) => setCurrentOrder({ ...currentOrder, client: { ...currentOrder.client, phone: e.target.value } })}
+                    defaultValue={currentOrder.client.phone}
                     placeholder="ej: 600 123 456"
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
                   />
@@ -626,9 +638,9 @@ export default function AppExpertRepairs() {
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">Email (opcional)</label>
                   <input
+                    ref={clientEmailRef}
                     type="email"
-                    value={currentOrder.client.email}
-                    onChange={(e) => setCurrentOrder({ ...currentOrder, client: { ...currentOrder.client, email: e.target.value } })}
+                    defaultValue={currentOrder.client.email}
                     placeholder="ej: juan@email.com"
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
                   />
@@ -637,7 +649,17 @@ export default function AppExpertRepairs() {
             </div>
             <div className="flex gap-3">
               <button onClick={() => setScreen('dashboard')} className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition">Cancelar</button>
-              <button onClick={() => { if (currentOrder.client.name && currentOrder.client.phone) setStep(1); else alert('Completa nombre y teléfono'); }} className="flex-1 px-4 py-2 bg-slate-900 text-white font-medium rounded-lg hover:bg-slate-800 transition">Siguiente</button>
+              <button onClick={() => {
+                const name = clientNameRef.current?.value || '';
+                const phone = clientPhoneRef.current?.value || '';
+                const email = clientEmailRef.current?.value || '';
+                if (name && phone) {
+                  setCurrentOrder({ ...currentOrder, client: { name, phone, email } });
+                  setStep(1);
+                } else {
+                  alert('Completa nombre y teléfono');
+                }
+              }} className="flex-1 px-4 py-2 bg-slate-900 text-white font-medium rounded-lg hover:bg-slate-800 transition">Siguiente</button>
             </div>
           </main>
         </div>
@@ -660,7 +682,7 @@ export default function AppExpertRepairs() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">Marca</label>
-                  <select value={currentOrder.device.brand} onChange={(e) => setCurrentOrder({ ...currentOrder, device: { ...currentOrder.device, brand: e.target.value } })} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                  <select ref={deviceBrandRef} defaultValue={currentOrder.device.brand} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
                     <option value="">Selecciona marca</option>
                     <option>Apple iPhone</option>
                     <option>Samsung</option>
@@ -670,15 +692,15 @@ export default function AppExpertRepairs() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">Modelo</label>
-                  <input type="text" value={currentOrder.device.model} onChange={(e) => setCurrentOrder({ ...currentOrder, device: { ...currentOrder.device, model: e.target.value } })} placeholder="ej: iPhone 15 Pro" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500" autoFocus />
+                  <input ref={deviceModelRef} type="text" defaultValue={currentOrder.device.model} placeholder="ej: iPhone 15 Pro" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500" autoFocus />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">IMEI / Nº serie</label>
-                  <input type="text" value={currentOrder.device.imei} onChange={(e) => setCurrentOrder({ ...currentOrder, device: { ...currentOrder.device, imei: e.target.value } })} placeholder="ej: 356938815342816" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500" />
+                  <input ref={deviceImeiRef} type="text" defaultValue={currentOrder.device.imei} placeholder="ej: 356938815342816" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">Estado físico</label>
-                  <select value={currentOrder.device.condition} onChange={(e) => setCurrentOrder({ ...currentOrder, device: { ...currentOrder.device, condition: e.target.value } })} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                  <select ref={deviceConditionRef} defaultValue={currentOrder.device.condition} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
                     <option value="">Selecciona estado</option>
                     <option>Impecable</option>
                     <option>Rayones superficiales</option>
@@ -690,7 +712,18 @@ export default function AppExpertRepairs() {
             </div>
             <div className="flex gap-3">
               <button onClick={() => setStep(0)} className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition">Atrás</button>
-              <button onClick={() => { if (currentOrder.device.brand && currentOrder.device.model) setStep(2); else alert('Completa marca y modelo'); }} className="flex-1 px-4 py-2 bg-slate-900 text-white font-medium rounded-lg hover:bg-slate-800 transition">Siguiente</button>
+              <button onClick={() => {
+                const brand = deviceBrandRef.current?.value || '';
+                const model = deviceModelRef.current?.value || '';
+                const imei = deviceImeiRef.current?.value || '';
+                const condition = deviceConditionRef.current?.value || '';
+                if (brand && model) {
+                  setCurrentOrder({ ...currentOrder, device: { brand, model, imei, condition } });
+                  setStep(2);
+                } else {
+                  alert('Completa marca y modelo');
+                }
+              }} className="flex-1 px-4 py-2 bg-slate-900 text-white font-medium rounded-lg hover:bg-slate-800 transition">Siguiente</button>
             </div>
           </main>
         </div>

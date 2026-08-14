@@ -147,51 +147,43 @@ export default function AppExpertRepairs() {
       try {
         const signature = canvas.toDataURL('image/png');
 
-        // Insertar cliente con validación
-        if (!currentOrder.client.name || !currentOrder.client.phone) {
-          throw new Error('Cliente: nombre y teléfono son requeridos');
-        }
+        // Use currentOrder directly - should be updated by form handlers
+        const name = currentOrder.client?.name || '';
+        const phone = currentOrder.client?.phone || '';
+        const email = currentOrder.client?.email || '';
+        const brand = currentOrder.device?.brand || '';
+        const model = currentOrder.device?.model || '';
+        const imei = currentOrder.device?.imei || '';
+        const condition = currentOrder.device?.condition || '';
+
+        if (!name || !phone) throw new Error('Cliente: nombre y teléfono son requeridos');
+        if (!brand || !model) throw new Error('Dispositivo: marca y modelo son requeridos');
 
         const { data: clientData, error: clientError } = await supabase
           .from('clients')
-          .insert([{
-            name: currentOrder.client.name || 'N/A',
-            phone: currentOrder.client.phone || 'N/A',
-            email: currentOrder.client.email || null
-          }])
+          .insert([{ name, phone, email: email || null }])
           .select();
 
         if (clientError) throw clientError;
-        if (!clientData || clientData.length === 0) throw new Error('Error insertando cliente');
+        if (!clientData?.length) throw new Error('Error insertando cliente');
         const clientId = clientData[0].id;
-
-        // Insertar dispositivo con validación
-        if (!currentOrder.device.brand || !currentOrder.device.model) {
-          throw new Error('Dispositivo: marca y modelo son requeridos');
-        }
 
         const { data: deviceData, error: deviceError } = await supabase
           .from('devices')
-          .insert([{
-            brand: currentOrder.device.brand || 'N/A',
-            model: currentOrder.device.model || 'N/A',
-            imei: currentOrder.device.imei || null,
-            condition: currentOrder.device.condition || 'Desconocido'
-          }])
+          .insert([{ brand, model, imei: imei || null, condition: condition || 'Desconocido' }])
           .select();
 
         if (deviceError) throw deviceError;
-        if (!deviceData || deviceData.length === 0) throw new Error('Error insertando dispositivo');
+        if (!deviceData?.length) throw new Error('Error insertando dispositivo');
         const deviceId = deviceData[0].id;
 
-        // Insertar orden
         const orderData = {
           id: currentOrder.id,
           technician: currentOrder.technician,
           timestamp: currentOrder.timestamp,
           client_id: clientId,
           device_id: deviceId,
-          photos: currentOrder.photos && currentOrder.photos.length > 0 ? currentOrder.photos : null,
+          photos: currentOrder.photos?.length ? currentOrder.photos : null,
           symptoms: currentOrder.symptoms || null,
           pin_encrypted: currentOrder.pin || null,
           signature: signature,
@@ -203,22 +195,17 @@ export default function AppExpertRepairs() {
           .insert([orderData]);
 
         if (orderError) throw orderError;
+        console.log('Orden guardada:', currentOrder.id);
 
-        console.log('Orden guardada exitosamente:', currentOrder.id);
-
-        // Enviar email
-        if (currentOrder.client.email) {
+        if (email) {
           try {
             await fetch('/api/send-email', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                email: currentOrder.client.email,
-                orderData: orderData
-              })
+              body: JSON.stringify({ email, orderData })
             });
           } catch (emailError) {
-            console.warn('Email send failed (non-blocking):', emailError);
+            console.warn('Email send failed:', emailError);
           }
         }
 

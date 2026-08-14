@@ -64,7 +64,7 @@ export default function AppExpertRepairs() {
   const startNewOrder = () => {
     const orderNumber = `ORD-${new Date().getFullYear()}-${String(orders.length + 1).padStart(4, '0')}`;
     const now = new Date();
-    const timestamp = now.toISOString().slice(0, 19).replace('T', ' ');
+    const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
     setCurrentOrder({
       id: orderNumber,
       technician: technician,

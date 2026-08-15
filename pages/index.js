@@ -275,6 +275,31 @@ export default function AppExpertRepairs() {
     }
   };
 
+  const handlePrintLabel = async (order) => {
+    try {
+      const response = await fetch('/api/print-label', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderData: order })
+      });
+
+      if (!response.ok) throw new Error('Error generando etiqueta');
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `etiqueta_${order.id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Print error:', error);
+      alert('Error generando etiqueta: ' + error.message);
+    }
+  };
+
   const handleSearch = async (query) => {
     setSearchQuery(query);
     if (query.trim() === '') {
@@ -675,11 +700,24 @@ export default function AppExpertRepairs() {
                 {orders.map((order) => (
                   <div
                     key={order.id}
-                    onClick={() => setSelectedOrder(order)}
-                    className="bg-white rounded-lg border border-slate-200 p-4 hover:shadow-md cursor-pointer"
+                    className="bg-white rounded-lg border border-slate-200 p-4 hover:shadow-md flex justify-between items-center"
                   >
-                    <p className="font-semibold text-slate-900">{order.id}</p>
-                    <p className="text-sm text-slate-600 mt-1">{order.client.name}</p>
+                    <div
+                      onClick={() => setSelectedOrder(order)}
+                      className="cursor-pointer flex-1"
+                    >
+                      <p className="font-semibold text-slate-900">{order.id}</p>
+                      <p className="text-sm text-slate-600 mt-1">{order.client.name}</p>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePrintLabel(order);
+                      }}
+                      className="ml-4 px-3 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm rounded-lg hover:shadow-lg transition-all whitespace-nowrap"
+                    >
+                      🖨️ Imprimir
+                    </button>
                   </div>
                 ))}
               </div>

@@ -24,6 +24,14 @@ Sistema profesional de gestión de reparaciones para AppExpert Gadgets Solutions
 - **Mensajes Personalizados**: Incluye nombre del cliente, número de orden y dispositivo
 - **Sin configuración manual**: Funciona automáticamente cuando se guarda una orden
 
+### ✅ Fase 3 - Thermal Printer Integration (COMPLETADA)
+- **Generación de Etiquetas PDF**: Crea PDFs listos para imprimir en impresoras térmicas
+- **QR Code Automático**: Cada etiqueta incluye un QR único de la orden
+- **Impresoras USB**: Soporte para impresoras Epson ES-POS conectadas por USB
+- **Impresoras de Red**: Compatible con impresoras térmicas en red Ethernet
+- **Botón de Impresión**: Interface simple en el dashboard ("🖨️ Imprimir")
+- **Tamaño Estándar**: Etiquetas de 4x3 pulgadas (tamaño industria)
+
 ### 🎯 Mejoras Realizadas
 - Login screen mejorado con gradiente y emojis
 - Dashboard con estadísticas en tiempo real
@@ -55,9 +63,11 @@ Sistema profesional de gestión de reparaciones para AppExpert Gadgets Solutions
 - **Database**: Supabase PostgreSQL
 - **Authentication**: Email via SendGrid
 - **Hosting**: Vercel
-- **QR Codes**: qrcode.react
+- **QR Codes**: qrcode.react + qrcode (servidor)
 - **Encryption**: AES-256 (para datos sensibles)
 - **WhatsApp**: Twilio API para notificaciones
+- **PDF**: pdfkit para generación de etiquetas
+- **Thermal Printers**: escpos para impresoras Epson
 
 ## ⚙️ Configuración de WhatsApp
 
@@ -74,6 +84,34 @@ Para activar las notificaciones de WhatsApp, necesitas:
 4. Desplegar cambios a Vercel
 
 📚 Ver [WHATSAPP_SETUP.md](./WHATSAPP_SETUP.md) para instrucciones detalladas.
+
+## 🖨️ Configuración de Impresoras Térmicas
+
+Para imprimir etiquetas en impresoras térmicas:
+
+1. **Descargar PDF** (recomendado para empezar):
+   - Dashboard → Busca la orden → Haz clic en "🖨️ Imprimir"
+   - Se descargará un PDF con la etiqueta
+   - Imprime desde tu navegador o aplicación PDF
+
+2. **Impresora USB Directa** (opcional):
+   - Conecta impresora Epson ES-POS por USB
+   - En Vercel Settings → Environment Variables:
+     ```env
+     PRINTER_TYPE=usb
+     PRINTER_PORT=COM3
+     ```
+   - El PDF se imprimirá automáticamente
+
+3. **Impresora de Red** (para negocios):
+   - Configura IP de tu impresora
+   - En Vercel Settings → Environment Variables:
+     ```env
+     PRINTER_HOST=192.168.1.100
+     PRINTER_PORT=9100
+     ```
+
+📚 Ver [THERMAL_PRINTER_SETUP.md](./THERMAL_PRINTER_SETUP.md) para detalles completos.
 
 ## 📋 Guía de Uso
 

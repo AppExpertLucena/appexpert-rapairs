@@ -1,6 +1,9 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
+  "env": {
+    "BUILD_ID": "2026-08-15-force-rebuild"
+  },
   "headers": [
     {
       "source": "/(.*)",

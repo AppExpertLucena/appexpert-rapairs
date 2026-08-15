@@ -201,28 +201,25 @@ export default function AppExpertRepairs() {
 
         let clientId;
 
-        // Intentar insertar, si falla por duplicate key, usar el existente
-        const { data: clientData, error: clientError } = await supabase
+        // Primero buscar si el cliente ya existe
+        const { data: existingClients, error: searchError } = await supabase
           .from('clients')
-          .insert([{ name, phone, email: email || null }])
-          .select();
+          .select('id')
+          .eq('phone', phone);
 
-        if (clientError) {
-          if (clientError.code === '23505') {
-            // Duplicate key - buscar cliente existente
-            const { data: existingClient, error: fetchError } = await supabase
-              .from('clients')
-              .select('id')
-              .eq('phone', phone)
-              .single();
+        if (searchError) throw searchError;
 
-            if (fetchError) throw fetchError;
-            if (!existingClient) throw new Error('No se pudo encontrar cliente existente');
-            clientId = existingClient.id;
-          } else {
-            throw clientError;
-          }
+        if (existingClients?.length > 0) {
+          // Cliente ya existe - usar su ID
+          clientId = existingClients[0].id;
         } else {
+          // Cliente no existe - crear nuevo
+          const { data: clientData, error: clientError } = await supabase
+            .from('clients')
+            .insert([{ name, phone, email: email || null }])
+            .select();
+
+          if (clientError) throw clientError;
           if (!clientData?.length) throw new Error('Error insertando cliente');
           clientId = clientData[0].id;
         }

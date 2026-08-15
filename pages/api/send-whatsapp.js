@@ -10,6 +10,8 @@ export default async function handler(req, res) {
   try {
     const { phone, message, type, orderData } = req.body;
 
+    console.log('WhatsApp request received:', { phone, messageLength: message?.length });
+
     if (!phone || !message) {
       return res.status(400).json({ error: 'Missing phone or message' });
     }

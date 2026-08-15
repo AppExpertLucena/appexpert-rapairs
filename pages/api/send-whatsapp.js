@@ -18,7 +18,7 @@ export default async function handler(req, res) {
 
     const msg = {
       body: message,
-      from: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
+      from: process.env.TWILIO_WHATSAPP_NUMBER,
       to: formattedPhone,
     };
 

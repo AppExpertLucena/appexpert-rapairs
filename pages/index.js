@@ -633,6 +633,21 @@ export default function AppExpertRepairs() {
           )}
 
           <div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-6 text-white">
+                <p className="text-blue-100 text-sm font-semibold">Total de Órdenes</p>
+                <p className="text-4xl font-bold mt-2">{orders.length}</p>
+              </div>
+              <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg p-6 text-white">
+                <p className="text-green-100 text-sm font-semibold">Completadas</p>
+                <p className="text-4xl font-bold mt-2">{orders.filter(o => o.status === 'completed').length}</p>
+              </div>
+              <div className="bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-lg p-6 text-white">
+                <p className="text-cyan-100 text-sm font-semibold">Pendientes</p>
+                <p className="text-4xl font-bold mt-2">{orders.filter(o => o.status !== 'completed').length}</p>
+              </div>
+            </div>
+
             <h2 className="text-xl font-bold text-slate-900 mb-4">Órdenes ({orders.length})</h2>
             {orders.length === 0 ? (
               <div className="bg-white rounded-lg border border-slate-200 p-8 text-center">

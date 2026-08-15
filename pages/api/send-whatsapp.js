@@ -25,14 +25,13 @@ export default async function handler(req, res) {
 
     console.log("📱 [WhatsApp] Teléfono formateado:", toNumber);
     console.log("📱 [WhatsApp] From:", process.env.TWILIO_WHATSAPP_NUMBER);
-    console.log("📱 [WhatsApp] ContentSid:", "HX436584f5b375c99a07a5b50701a328fd");
+    console.log("📱 [WhatsApp] ContentSid:", "HX5df5ef1041024212ba204f9480afbff0");
 
-    // NOTA: Se removió contentSid porque era inválido
-    // Usando free-form messages en lugar de Content Templates
     const message = await client.messages.create({
       body: `Hola ${customerName}! Tu reparación ${repairId} ha sido recibida. Dispositivo: ${deviceType}. Orden: ${orderNumber}`,
       from: process.env.TWILIO_WHATSAPP_NUMBER,
-      to: `whatsapp:${toNumber}`
+      to: `whatsapp:${toNumber}`,
+      contentSid: "HX5df5ef1041024212ba204f9480afbff0"
     });
 
     console.log("✅ [WhatsApp] Mensaje enviado exitosamente:", message.sid);
@@ -45,7 +44,7 @@ export default async function handler(req, res) {
       debugInfo: {
         phoneFormatted: toNumber,
         from: process.env.TWILIO_WHATSAPP_NUMBER,
-        contentSidUsed: "HX436584f5b375c99a07a5b50701a328fd"
+        contentSidUsed: "HX5df5ef1041024212ba204f9480afbff0"
       }
     });
   } catch (error) {

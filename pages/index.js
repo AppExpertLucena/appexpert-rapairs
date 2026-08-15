@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { createBrowserClient } from '@supabase/ssr';
+import dynamic from 'next/dynamic';
+
+const QRCode = dynamic(() => import('qrcode.react'), { ssr: false });
 
 export const revalidate = 0;
 
 let supabase = null;
+let supabaseLoaded = false;
 
 export default function AppExpertRepairs() {
   const [screen, setScreen] = useState('login');
@@ -44,7 +47,11 @@ export default function AppExpertRepairs() {
       setLoading(true);
       const { data, error } = await supabase
         .from('orders')
-        .select('*')
+        .select(`
+          *,
+          client:clients(id,name,phone,email),
+          device:devices(id,brand,model,imei,condition)
+        `)
         .order('timestamp', { ascending: false });
 
       if (error) throw error;
@@ -59,13 +66,19 @@ export default function AppExpertRepairs() {
 
   // Initialize Supabase and load orders on mount
   useEffect(() => {
-    if (typeof window !== 'undefined' && !supabase) {
+    if (typeof window !== 'undefined' && !supabaseLoaded) {
+      supabaseLoaded = true;
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
       const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
       if (supabaseUrl && supabaseKey) {
         try {
-          supabase = createBrowserClient(supabaseUrl, supabaseKey);
-          loadOrders();
+          import('@supabase/ssr').then(({ createBrowserClient }) => {
+            supabase = createBrowserClient(supabaseUrl, supabaseKey);
+            loadOrders();
+          }).catch(error => {
+            console.error('Supabase import error:', error);
+            setOrders([]);
+          });
         } catch (error) {
           console.error('Supabase init error:', error);
           setOrders([]);
@@ -262,16 +275,24 @@ export default function AppExpertRepairs() {
       const lowerQuery = query.toLowerCase();
       const { data, error } = await supabase
         .from('orders')
-        .select('*')
+        .select(`
+          *,
+          client:clients(id,name,phone,email),
+          device:devices(id,brand,model,imei,condition)
+        `)
         .or(
-          `id.ilike.%${query}%,` +
-          `client->phone.ilike.%${query}%,` +
-          `client->name.ilike.%${query}%,` +
-          `device->imei.ilike.%${query}%`
+          `id.ilike.%${query}%`
         );
 
       if (error) throw error;
-      setSearchResults(data || []);
+      // Filter results on client side for client and device fields
+      const filtered = (data || []).filter(order =>
+        order.id.toLowerCase().includes(lowerQuery) ||
+        (order.client?.phone && order.client.phone.includes(query)) ||
+        (order.client?.name && order.client.name.toLowerCase().includes(lowerQuery)) ||
+        (order.device?.imei && order.device.imei.includes(query))
+      );
+      setSearchResults(filtered);
     } catch (error) {
       console.error('Error searching:', error);
       setSearchResults([]);
@@ -425,39 +446,46 @@ export default function AppExpertRepairs() {
 
   if (screen === 'login') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
-          <div className="bg-white rounded-lg shadow-2xl p-8">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">AppExpert</h1>
-              <p className="text-sm text-slate-500">Gestión de Reparaciones</p>
+          <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
+            <div className="bg-gradient-to-r from-slate-900 to-cyan-600 px-8 py-12 text-center">
+              <div className="inline-block bg-white rounded-full p-4 mb-4">
+                <div className="text-3xl">🔧</div>
+              </div>
+              <h1 className="text-4xl font-bold text-white mb-2">AppExpert</h1>
+              <p className="text-cyan-100">Gestión de Reparaciones</p>
             </div>
-            <div className="space-y-4">
+            <div className="p-8 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Técnico</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">👤 Nombre del Técnico</label>
                 <input
                   ref={technicianRef}
                   type="text"
                   defaultValue={technician}
                   onKeyPress={(e) => e.key === 'Enter' && (setTechnician(technicianRef.current?.value || ''), handleLogin())}
-                  placeholder="Tu nombre"
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  placeholder="Ej: Juan García"
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
                   autoFocus
                 />
               </div>
               <button
                 onClick={() => {
-                  const techInput = document.querySelector('input[placeholder="Tu nombre"]');
-                  const techValue = techInput?.value || '';
-                  if (techValue.trim()) {
-                    setTechnician(techValue);
-                    setScreen('dashboard');
+                  const techValue = technicianRef.current?.value || '';
+                  if (techValue.trim().length < 2) {
+                    alert('Ingresa tu nombre (al menos 2 caracteres)');
+                    return;
                   }
+                  setTechnician(techValue);
+                  setScreen('dashboard');
                 }}
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2 px-4 rounded-lg transition"
+                className="w-full bg-gradient-to-r from-slate-900 to-cyan-600 hover:from-slate-800 hover:to-cyan-700 text-white font-bold py-3 px-4 rounded-lg transition transform hover:scale-105"
               >
-                Entrar
+                🚀 Entrar al Sistema
               </button>
+              <p className="text-center text-xs text-slate-500 mt-4">
+                AppExpert Gadgets Solutions • Lucena, Córdoba
+              </p>
             </div>
           </div>
         </div>
@@ -484,7 +512,7 @@ export default function AppExpertRepairs() {
             </div>
           </header>
           <main className="max-w-4xl mx-auto px-4 py-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
               <div className="bg-white rounded-lg p-6 border border-slate-200">
                 <h2 className="text-sm font-bold text-slate-900 uppercase mb-4 pb-3 border-b border-cyan-500">Cliente</h2>
                 <div className="space-y-3">
@@ -497,6 +525,13 @@ export default function AppExpertRepairs() {
                     <p className="text-slate-900 font-medium">{selectedOrder.client.phone}</p>
                   </div>
                 </div>
+              </div>
+              <div className="bg-white rounded-lg p-6 border border-slate-200 flex flex-col items-center justify-center">
+                <h2 className="text-sm font-bold text-slate-900 uppercase mb-4 pb-3 border-b border-cyan-500 w-full text-center">Código QR</h2>
+                <div className="bg-white p-2 rounded border border-slate-200">
+                  <QRCode value={selectedOrder.id} size={120} level="H" includeMargin={true} />
+                </div>
+                <p className="text-xs text-slate-600 mt-4 text-center font-mono">{selectedOrder.id}</p>
               </div>
               <div className="bg-white rounded-lg p-6 border border-slate-200">
                 <h2 className="text-sm font-bold text-slate-900 uppercase mb-4 pb-3 border-b border-cyan-500">Dispositivo</h2>

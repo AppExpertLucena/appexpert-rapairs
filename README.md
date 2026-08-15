@@ -18,6 +18,12 @@ Sistema profesional de gestión de reparaciones para AppExpert Gadgets Solutions
 - **Estadísticas**: Dashboard con métricas de órdenes
 - **Validaciones**: Validación completa de datos entrada
 
+### ✅ Fase 2 - WhatsApp Integration (COMPLETADA)
+- **WhatsApp Automático**: Notificaciones por WhatsApp cuando se recibe una orden
+- **Integración Twilio**: Envío de mensajes via API de Twilio
+- **Mensajes Personalizados**: Incluye nombre del cliente, número de orden y dispositivo
+- **Sin configuración manual**: Funciona automáticamente cuando se guarda una orden
+
 ### 🎯 Mejoras Realizadas
 - Login screen mejorado con gradiente y emojis
 - Dashboard con estadísticas en tiempo real
@@ -51,6 +57,23 @@ Sistema profesional de gestión de reparaciones para AppExpert Gadgets Solutions
 - **Hosting**: Vercel
 - **QR Codes**: qrcode.react
 - **Encryption**: AES-256 (para datos sensibles)
+- **WhatsApp**: Twilio API para notificaciones
+
+## ⚙️ Configuración de WhatsApp
+
+Para activar las notificaciones de WhatsApp, necesitas:
+
+1. Crear cuenta en [Twilio](https://www.twilio.com)
+2. Configurar WhatsApp en Twilio Console
+3. Agregar variables de entorno:
+   ```env
+   TWILIO_ACCOUNT_SID=AC...
+   TWILIO_AUTH_TOKEN=...
+   TWILIO_WHATSAPP_NUMBER=whatsapp:+34...
+   ```
+4. Desplegar cambios a Vercel
+
+📚 Ver [WHATSAPP_SETUP.md](./WHATSAPP_SETUP.md) para instrucciones detalladas.
 
 ## 📋 Guía de Uso
 

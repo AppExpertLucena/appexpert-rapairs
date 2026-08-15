@@ -884,163 +884,168 @@ export default function AppExpertRepairs() {
 
     if (step === 2) {
       return (
-        <div className="min-h-screen bg-slate-50">
-          <header className="bg-white border-b border-slate-200 sticky top-0">
-            <div className="max-w-2xl mx-auto px-4 py-4">
-              <h1 className="text-xl font-bold text-slate-900">{currentOrder.id}</h1>
-              <p className="text-sm text-slate-500">Paso 3 de 7: Captura fotos</p>
+        <div className="app-container" style={{ backgroundColor: 'var(--bg)' }}>
+          <div className="dashboard-container">
+            <div className="dashboard-header">
+              <div>
+                <h2 className="dashboard-title">{currentOrder.id}</h2>
+                <p className="dashboard-subtitle">Paso 3 de 7: Captura fotos</p>
+              </div>
             </div>
-          </header>
 
-          <main className="max-w-2xl mx-auto px-4 py-8">
-            <div className="bg-white rounded-lg p-6 mb-6">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">Fotografías del dispositivo</h2>
-              <p className="text-sm text-slate-600 mb-6">Captura: frente, trasera, laterales</p>
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-slate-700 mb-3">Subir foto</label>
-                <input type="file" accept="image/*" onChange={handlePhotoCapture} multiple capture="environment" className="w-full px-4 py-2 border-2 border-dashed border-slate-300 rounded-lg text-sm" />
+            <div className="card">
+              <h3 className="card-title" style={{ marginBottom: '8px' }}>Fotografías del dispositivo</h3>
+              <p className="text-muted" style={{ fontSize: '14px', marginBottom: '24px' }}>Captura: frente, trasera, laterales</p>
+              <div style={{ marginBottom: '24px' }}>
+                <label className="form-label">Subir foto</label>
+                <input type="file" accept="image/*" onChange={handlePhotoCapture} multiple capture="environment" className="form-input" style={{ borderStyle: 'dashed', borderWidth: '2px', cursor: 'pointer' }} />
               </div>
               {currentOrder.photos.length > 0 && (
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px', marginBottom: '20px' }}>
                   {currentOrder.photos.map((photo, idx) => (
-                    <div key={idx} className="relative">
-                      <img src={photo} alt={`Foto ${idx + 1}`} className="w-full h-32 object-cover rounded-lg border border-slate-200" />
-                      <button onClick={() => removePhoto(idx)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold hover:bg-red-600">✕</button>
+                    <div key={idx} style={{ position: 'relative' }}>
+                      <img src={photo} alt={`Foto ${idx + 1}`} style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border)' }} />
+                      <button onClick={() => removePhoto(idx)} style={{ position: 'absolute', top: '4px', right: '4px', background: 'var(--error)', color: 'white', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold', border: 'none', cursor: 'pointer' }}>✕</button>
                     </div>
                   ))}
                 </div>
               )}
-              <p className="text-xs text-slate-500 mt-4">{currentOrder.photos.length} foto(s) capturada(s)</p>
+              <p className="text-muted" style={{ fontSize: '12px' }}>{currentOrder.photos.length} foto(s) capturada(s)</p>
             </div>
-            <div className="flex gap-3">
-              <button onClick={() => setStep(1)} className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition">Atrás</button>
-              <button onClick={() => setStep(3)} className="flex-1 px-4 py-2 bg-slate-900 text-white font-medium rounded-lg hover:bg-slate-800 transition">Siguiente</button>
+
+            <div className="dashboard-actions" style={{ marginTop: '30px' }}>
+              <button onClick={() => setStep(1)} className="btn btn-secondary">← Atrás</button>
+              <button onClick={() => setStep(3)} className="btn btn-primary">Siguiente →</button>
             </div>
-          </main>
+          </div>
         </div>
       );
     }
 
     if (step === 3) {
       return (
-        <div className="min-h-screen bg-slate-50">
-          <header className="bg-white border-b border-slate-200 sticky top-0">
-            <div className="max-w-2xl mx-auto px-4 py-4">
-              <h1 className="text-xl font-bold text-slate-900">{currentOrder.id}</h1>
-              <p className="text-sm text-slate-500">Paso 4 de 7: Síntomas reportados</p>
+        <div className="app-container" style={{ backgroundColor: 'var(--bg)' }}>
+          <div className="dashboard-container">
+            <div className="dashboard-header">
+              <div>
+                <h2 className="dashboard-title">{currentOrder.id}</h2>
+                <p className="dashboard-subtitle">Paso 4 de 7: Síntomas reportados</p>
+              </div>
             </div>
-          </header>
 
-          <main className="max-w-2xl mx-auto px-4 py-8">
-            <div className="bg-white rounded-lg p-6 mb-6">
-              <h2 className="text-lg font-semibold text-slate-900 mb-6">¿Qué problema tiene el dispositivo?</h2>
-              <textarea value={currentOrder.symptoms} onChange={(e) => setCurrentOrder({ ...currentOrder, symptoms: e.target.value })} placeholder="Describe los síntomas..." className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 font-sans resize-none" rows={6} autoFocus />
-              <p className="text-xs text-slate-500 mt-2">Describe los síntomas con detalle</p>
+            <div className="card">
+              <h3 className="card-title mb-20" style={{ marginBottom: '24px' }}>¿Qué problema tiene el dispositivo?</h3>
+              <div className="form-group">
+                <textarea value={currentOrder.symptoms} onChange={(e) => setCurrentOrder({ ...currentOrder, symptoms: e.target.value })} placeholder="Describe los síntomas..." className="form-textarea" rows={6} autoFocus />
+                <p className="text-muted" style={{ fontSize: '12px', marginTop: '8px' }}>Describe los síntomas con detalle</p>
+              </div>
             </div>
-            <div className="flex gap-3">
-              <button onClick={() => setStep(2)} className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition">Atrás</button>
-              <button onClick={() => { if (currentOrder.symptoms.trim()) setStep(4); else alert('Describe los síntomas'); }} className="flex-1 px-4 py-2 bg-slate-900 text-white font-medium rounded-lg hover:bg-slate-800 transition">Siguiente</button>
+
+            <div className="dashboard-actions" style={{ marginTop: '30px' }}>
+              <button onClick={() => setStep(2)} className="btn btn-secondary">← Atrás</button>
+              <button onClick={() => { if (currentOrder.symptoms.trim()) setStep(4); else alert('Describe los síntomas'); }} className="btn btn-primary">Siguiente →</button>
             </div>
-          </main>
+          </div>
         </div>
       );
     }
 
     if (step === 4) {
       return (
-        <div className="min-h-screen bg-slate-50">
-          <header className="bg-white border-b border-slate-200 sticky top-0">
-            <div className="max-w-2xl mx-auto px-4 py-4">
-              <h1 className="text-xl font-bold text-slate-900">{currentOrder.id}</h1>
-              <p className="text-sm text-slate-500">Paso 5 de 7: Datos sensibles</p>
+        <div className="app-container" style={{ backgroundColor: 'var(--bg)' }}>
+          <div className="dashboard-container">
+            <div className="dashboard-header">
+              <div>
+                <h2 className="dashboard-title">{currentOrder.id}</h2>
+                <p className="dashboard-subtitle">Paso 5 de 7: Datos sensibles</p>
+              </div>
             </div>
-          </header>
 
-          <main className="max-w-2xl mx-auto px-4 py-8">
-            <div className="bg-white rounded-lg p-6 mb-6">
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
-                <p className="text-sm text-amber-900"><strong>⚠️ Datos sensibles:</strong> Se cifrarán automáticamente.</p>
+            <div className="card">
+              <div style={{ backgroundColor: '#fff3e0', border: '1px solid #FFB74D', borderRadius: '8px', padding: '16px', marginBottom: '24px' }}>
+                <p style={{ fontSize: '14px', color: '#E65100' }}><strong>⚠️ Datos sensibles:</strong> Se cifrarán automáticamente.</p>
               </div>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">PIN de pantalla (opcional)</label>
-                  <input type="password" value={currentOrder.pin} onChange={(e) => setCurrentOrder({ ...currentOrder, pin: e.target.value })} placeholder="Déjalo vacío si no conoces el PIN" maxLength={6} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 font-mono" autoFocus />
-                  <p className="text-xs text-slate-500 mt-1">Este campo se cifrará en la base de datos</p>
-                </div>
+              <div className="form-group">
+                <label className="form-label">PIN de pantalla (opcional)</label>
+                <input type="password" value={currentOrder.pin} onChange={(e) => setCurrentOrder({ ...currentOrder, pin: e.target.value })} placeholder="Déjalo vacío si no conoces el PIN" maxLength={6} className="form-input" autoFocus />
+                <p className="text-muted" style={{ fontSize: '12px', marginTop: '8px' }}>Este campo se cifrará en la base de datos</p>
               </div>
             </div>
-            <div className="flex gap-3">
-              <button onClick={() => setStep(3)} className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition">Atrás</button>
-              <button onClick={() => setStep(5)} className="flex-1 px-4 py-2 bg-slate-900 text-white font-medium rounded-lg hover:bg-slate-800 transition">Siguiente</button>
+
+            <div className="dashboard-actions" style={{ marginTop: '30px' }}>
+              <button onClick={() => setStep(3)} className="btn btn-secondary">← Atrás</button>
+              <button onClick={() => setStep(5)} className="btn btn-primary">Siguiente →</button>
             </div>
-          </main>
+          </div>
         </div>
       );
     }
 
     if (step === 5) {
       return (
-        <div className="min-h-screen bg-slate-50">
-          <header className="bg-white border-b border-slate-200 sticky top-0">
-            <div className="max-w-2xl mx-auto px-4 py-4">
-              <h1 className="text-xl font-bold text-slate-900">{currentOrder.id}</h1>
-              <p className="text-sm text-slate-500">Paso 6 de 7: Revisar</p>
+        <div className="app-container" style={{ backgroundColor: 'var(--bg)' }}>
+          <div className="dashboard-container">
+            <div className="dashboard-header">
+              <div>
+                <h2 className="dashboard-title">{currentOrder.id}</h2>
+                <p className="dashboard-subtitle">Paso 6 de 7: Revisar</p>
+              </div>
             </div>
-          </header>
 
-          <main className="max-w-2xl mx-auto px-4 py-8">
-            <div className="bg-white rounded-lg p-6 mb-6">
-              <h2 className="text-lg font-semibold text-slate-900 mb-6">Resumen de la orden</h2>
-              <div className="space-y-6">
-                <div className="border-b pb-4">
-                  <p className="text-xs font-semibold text-slate-500 uppercase mb-2">Cliente</p>
-                  <p className="font-medium text-slate-900">{currentOrder.client.name}</p>
-                  <p className="text-sm text-slate-600">{currentOrder.client.phone}</p>
+            <div className="card">
+              <h3 className="card-title mb-20" style={{ marginBottom: '24px' }}>Resumen de la orden</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: '16px' }}>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Cliente</p>
+                  <p style={{ fontWeight: '500', fontSize: '16px', color: 'var(--text)', marginBottom: '4px' }}>{currentOrder.client.name}</p>
+                  <p style={{ fontSize: '14px', color: 'var(--text-light)' }}>{currentOrder.client.phone}</p>
                 </div>
-                <div className="border-b pb-4">
-                  <p className="text-xs font-semibold text-slate-500 uppercase mb-2">Dispositivo</p>
-                  <p className="font-medium text-slate-900">{currentOrder.device.brand} {currentOrder.device.model}</p>
-                  <p className="text-sm text-slate-600">Estado: {currentOrder.device.condition}</p>
+                <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: '16px' }}>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Dispositivo</p>
+                  <p style={{ fontWeight: '500', fontSize: '16px', color: 'var(--text)', marginBottom: '4px' }}>{currentOrder.device.brand} {currentOrder.device.model}</p>
+                  <p style={{ fontSize: '14px', color: 'var(--text-light)' }}>Estado: {currentOrder.device.condition}</p>
                 </div>
-                <div className="border-b pb-4">
-                  <p className="text-xs font-semibold text-slate-500 uppercase mb-2">Síntomas</p>
-                  <p className="text-sm text-slate-700 whitespace-pre-wrap">{currentOrder.symptoms}</p>
+                <div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Síntomas</p>
+                  <p style={{ fontSize: '14px', color: 'var(--text)', whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>{currentOrder.symptoms}</p>
                 </div>
               </div>
             </div>
-            <div className="flex gap-3">
-              <button onClick={() => setStep(4)} className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition">Atrás</button>
-              <button onClick={() => setStep(6)} className="flex-1 px-4 py-2 bg-slate-900 text-white font-medium rounded-lg hover:bg-slate-800 transition">Siguiente: Firmar</button>
+
+            <div className="dashboard-actions" style={{ marginTop: '30px' }}>
+              <button onClick={() => setStep(4)} className="btn btn-secondary">← Atrás</button>
+              <button onClick={() => setStep(6)} className="btn btn-primary">Siguiente: Firmar →</button>
             </div>
-          </main>
+          </div>
         </div>
       );
     }
 
     if (step === 6) {
       return (
-        <div className="min-h-screen bg-slate-50">
-          <header className="bg-white border-b border-slate-200 sticky top-0">
-            <div className="max-w-2xl mx-auto px-4 py-4">
-              <h1 className="text-xl font-bold text-slate-900">{currentOrder.id}</h1>
-              <p className="text-sm text-slate-500">Paso 7 de 7: Firma del cliente</p>
-            </div>
-          </header>
-
-          <main className="max-w-2xl mx-auto px-4 py-8">
-            <div className="bg-white rounded-lg p-6 mb-6">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">Firma digital</h2>
-              <p className="text-sm text-slate-600 mb-6">Firma en la zona gris con el dedo (o ratón)</p>
-              <div className="border-2 border-slate-300 rounded-lg overflow-hidden mb-4 bg-gray-100">
-                <canvas ref={canvasRef} width={500} height={250} onMouseDown={startDrawing} onMouseMove={draw} onMouseUp={stopDrawing} onMouseLeave={stopDrawing} onTouchStart={startDrawing} onTouchMove={draw} onTouchEnd={stopDrawing} className="w-full touch-none cursor-crosshair block" style={{ display: 'block' }} />
+        <div className="app-container" style={{ backgroundColor: 'var(--bg)' }}>
+          <div className="dashboard-container">
+            <div className="dashboard-header">
+              <div>
+                <h2 className="dashboard-title">{currentOrder.id}</h2>
+                <p className="dashboard-subtitle">Paso 7 de 7: Firma del cliente</p>
               </div>
-              <button onClick={clearSignature} className="w-full px-4 py-2 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition mb-4">Borrar firma</button>
             </div>
-            <div className="flex gap-3">
-              <button onClick={() => setStep(5)} className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition">Atrás</button>
-              <button onClick={captureSignature} className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition">Completar</button>
+
+            <div className="card">
+              <h3 className="card-title mb-20" style={{ marginBottom: '16px' }}>Firma digital</h3>
+              <p className="text-muted" style={{ fontSize: '14px', marginBottom: '16px' }}>Firma en la zona gris con el dedo (o ratón)</p>
+              <div style={{ border: '2px solid var(--border)', borderRadius: '8px', overflow: 'hidden', marginBottom: '16px', backgroundColor: '#f9f9f9' }}>
+                <canvas ref={canvasRef} width={500} height={250} onMouseDown={startDrawing} onMouseMove={draw} onMouseUp={stopDrawing} onMouseLeave={stopDrawing} onTouchStart={startDrawing} onTouchMove={draw} onTouchEnd={stopDrawing} style={{ display: 'block', width: '100%', height: '250px', cursor: 'crosshair', touchAction: 'none' }} />
+              </div>
+              <button onClick={clearSignature} className="btn btn-secondary" style={{ width: '100%', marginBottom: '16px' }}>Borrar firma</button>
             </div>
-          </main>
+
+            <div className="dashboard-actions" style={{ marginTop: '30px' }}>
+              <button onClick={() => setStep(5)} className="btn btn-secondary">← Atrás</button>
+              <button onClick={captureSignature} className="btn btn-accent">✓ Completar</button>
+            </div>
+          </div>
         </div>
       );
     }

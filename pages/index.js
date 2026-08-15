@@ -265,37 +265,16 @@ export default function AppExpertRepairs() {
           }
         }
 
-        if (phone) {
-          try {
-            const cleanedPhone = phone.startsWith('+') ? phone : '+34' + phone.replace(/\D/g, '');
-            console.log('📱 Enviando WhatsApp a:', cleanedPhone);
-
-            const whatsappResponse = await fetch('/api/send-whatsapp', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                to: cleanedPhone,
-                customerName: name,
-                repairId: currentOrder.id,
-                deviceType: `${brand} ${model}`,
-                orderNumber: currentOrder.id
-              })
-            });
-
-            const whatsappData = await whatsappResponse.json();
-
-            if (!whatsappResponse.ok) {
-              console.error('❌ Error WhatsApp:', whatsappData);
-              alert(`⚠️ WhatsApp no se pudo enviar: ${whatsappData.error}`);
-            } else {
-              console.log('✅ WhatsApp enviado exitosamente:', whatsappData.messageSid);
-              alert('✅ Orden guardada y WhatsApp enviado!');
-            }
-          } catch (whatsappError) {
-            console.error('❌ Error enviando WhatsApp:', whatsappError);
-            alert(`Error enviando WhatsApp: ${whatsappError.message}`);
-          }
-        }
+        // WhatsApp deshabilitado temporalmente - se agregará con servicio de pago después
+        // if (phone) {
+        //   try {
+        //     const cleanedPhone = phone.startsWith('+') ? phone : '+34' + phone.replace(/\D/g, '');
+        //     console.log('📱 Enviando WhatsApp a:', cleanedPhone);
+        //     // ... WhatsApp code commented out
+        //   } catch (whatsappError) {
+        //     console.error('❌ Error enviando WhatsApp:', whatsappError);
+        //   }
+        // }
 
         setScreen('dashboard');
         setCurrentOrder(null);

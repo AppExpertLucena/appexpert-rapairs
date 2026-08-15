@@ -14,14 +14,18 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing orderData or order ID' });
     }
 
-    // Generar QR code como data URL
+    // Generar QR code con alta calidad
     const qrContent = `https://reparaciones.appexpertlucena.es/?order=${orderData.id}`;
     const qrDataUrl = await QRCode.toDataURL(qrContent, {
       errorCorrectionLevel: 'H',
       type: 'image/png',
-      quality: 0.95,
-      margin: 1,
-      width: 300,
+      quality: 0.99,
+      margin: 2,
+      width: 350,
+      color: {
+        dark: '#000000',
+        light: '#FFFFFF'
+      }
     });
 
     // Crear PDF
@@ -67,9 +71,10 @@ export default async function handler(req, res) {
 
     doc.moveDown(0.3);
 
-    // QR Code
-    doc.image(qrDataUrl, 75, doc.y, { width: 53, height: 53 });
-    doc.moveDown(3.5);
+    // QR Code - Mejorado
+    doc.moveDown(0.3);
+    doc.image(qrDataUrl, 65, doc.y, { width: 73, height: 73 });
+    doc.moveDown(4.5);
 
     // Footer
     doc.moveTo(10, doc.y).lineTo(193, doc.y).stroke();

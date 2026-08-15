@@ -41,7 +41,6 @@ body {
 /* === LOGIN SCREEN === */
 .login-screen {
   width: 100%;
-  max-width: 420px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,11 +49,13 @@ body {
 
 .login-card {
   background: white;
-  border-radius: 12px;
+  border-radius: 16px;
   box-shadow: var(--shadow-lg);
-  padding: 60px 40px;
+  padding: 80px 50px;
   text-align: center;
   animation: slideUp 0.5s ease-out;
+  width: 100%;
+  max-width: 480px;
 }
 
 @keyframes slideUp {
@@ -69,12 +70,12 @@ body {
 }
 
 .login-header {
-  margin-bottom: 40px;
+  margin-bottom: 60px;
 }
 
 .logo-icon {
-  font-size: 48px;
-  margin-bottom: 20px;
+  font-size: 64px;
+  margin-bottom: 24px;
   display: inline-block;
   animation: bounce 2s infinite;
 }
@@ -85,22 +86,28 @@ body {
 }
 
 .login-title {
-  font-size: 28px;
+  font-size: 36px;
   font-weight: 700;
   color: var(--primary);
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
 }
 
 .login-subtitle {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-light);
-  opacity: 0.8;
+  opacity: 0.85;
+  font-weight: 500;
 }
 
 /* === FORMULARIOS === */
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 28px;
   text-align: left;
+}
+
+.login-card .form-group {
+  margin-bottom: 32px;
 }
 
 .form-label {
@@ -108,7 +115,7 @@ body {
   font-size: 13px;
   font-weight: 600;
   color: var(--primary);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -124,6 +131,11 @@ body {
   font-family: inherit;
   transition: all 0.3s ease;
   background: white;
+}
+
+.login-card .form-input {
+  padding: 16px 18px;
+  font-size: 15px;
 }
 
 .form-input:focus,
@@ -154,6 +166,14 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
+}
+
+.login-card .btn {
+  padding: 16px 32px;
+  font-size: 15px;
+  font-weight: 700;
+  width: 100%;
+  margin-top: 8px;
 }
 
 .btn-primary {

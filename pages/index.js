@@ -193,7 +193,11 @@ export default function AppExpertRepairs() {
         const condition = currentOrder.device?.condition || '';
 
         if (!name || !phone) throw new Error('Cliente: nombre y teléfono son requeridos');
+        if (name.length < 3) throw new Error('Nombre debe tener al menos 3 caracteres');
+        if (!/^\d{9,15}$/.test(phone.replace(/[^\d]/g, ''))) throw new Error('Teléfono inválido (debe tener 9-15 dígitos)');
         if (!brand || !model) throw new Error('Dispositivo: marca y modelo son requeridos');
+        if (brand.length < 2) throw new Error('Marca del dispositivo muy corta');
+        if (model.length < 2) throw new Error('Modelo del dispositivo muy corto');
 
         const { data: clientData, error: clientError } = await supabase
           .from('clients')

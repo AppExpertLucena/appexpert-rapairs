@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import '../styles/professional.css';
 
 const QRCode = dynamic(() => import('qrcode.react'), { ssr: false });
 

@@ -17,12 +17,15 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const messageBody = `Hola ${customerName}! Tu reparación ${repairId} ha sido recibida. Dispositivo: ${deviceType}. Orden: ${orderNumber}`;
+    // Ensure phone number is formatted correctly for Twilio
+    const phoneNumber = to.toString().replace(/\D/g, ''); // Remove all non-digits
+    const toNumber = phoneNumber.length === 9 ? `+34${phoneNumber}` : `+34${phoneNumber.slice(-9)}`;
 
     const message = await client.messages.create({
-      body: messageBody,
-      from: "whatsapp:+14155238886",
-      to: `whatsapp:${to}`,
+      body: `Hola ${customerName}! Tu reparación ${repairId} ha sido recibida. Dispositivo: ${deviceType}. Orden: ${orderNumber}`,
+      from: process.env.TWILIO_WHATSAPP_NUMBER,
+      to: `whatsapp:${toNumber}`,
+      contentSid: "HX436584f5b375c99a07a5b50701a328fd",
     });
 
     return res.status(200).json({
@@ -30,7 +33,10 @@ export default async function handler(req, res) {
       messageSid: message.sid,
     });
   } catch (error) {
-    console.error("Error:", error.message);
-    return res.status(500).json({ error: error.message });
+    console.error("Error sending WhatsApp message:", error);
+    return res.status(500).json({
+      error: error.message,
+      code: error.code
+    });
   }
 }

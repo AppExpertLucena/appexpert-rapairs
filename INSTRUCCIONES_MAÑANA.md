@@ -69,7 +69,7 @@ appexpert-rapairs/
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://pyrkuwteyiskasykyfxn.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_V1Ktox2Btf0AI0FdHIDbOQ_awcYf800
-SENDGRID_API_KEY=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
+SENDGRID_API_KEY=SG.XXXXXX... (tu API key aquí)
 ```
 
 ## 🧪 Testing

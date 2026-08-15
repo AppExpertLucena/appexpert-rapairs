@@ -14,16 +14,14 @@ export default async function handler(req, res) {
     const { to, customerName, repairId, deviceType, orderNumber } = req.body;
 
     if (!to || !customerName || !repairId || !deviceType || !orderNumber) {
-      return res.status(400).json({
-        error: "Missing required fields",
-      });
+      return res.status(400).json({ error: "Missing required fields" });
     }
 
     const messageBody = `Hola ${customerName}! Tu reparación ${repairId} ha sido recibida. Dispositivo: ${deviceType}. Orden: ${orderNumber}`;
 
     const message = await client.messages.create({
       body: messageBody,
-      from: process.env.TWILIO_WHATSAPP_NUMBER,
+      from: "whatsapp:+14155238886",
       to: `whatsapp:${to}`,
     });
 
@@ -33,8 +31,6 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("Error:", error.message);
-    return res.status(500).json({
-      error: error.message,
-    });
+    return res.status(500).json({ error: error.message });
   }
 }

@@ -199,14 +199,33 @@ export default function AppExpertRepairs() {
         if (brand.length < 2) throw new Error('Marca del dispositivo muy corta');
         if (model.length < 2) throw new Error('Modelo del dispositivo muy corto');
 
+        let clientId;
+
+        // Intentar insertar, si falla por duplicate key, usar el existente
         const { data: clientData, error: clientError } = await supabase
           .from('clients')
           .insert([{ name, phone, email: email || null }])
           .select();
 
-        if (clientError) throw clientError;
-        if (!clientData?.length) throw new Error('Error insertando cliente');
-        const clientId = clientData[0].id;
+        if (clientError) {
+          if (clientError.code === '23505') {
+            // Duplicate key - buscar cliente existente
+            const { data: existingClient, error: fetchError } = await supabase
+              .from('clients')
+              .select('id')
+              .eq('phone', phone)
+              .single();
+
+            if (fetchError) throw fetchError;
+            if (!existingClient) throw new Error('No se pudo encontrar cliente existente');
+            clientId = existingClient.id;
+          } else {
+            throw clientError;
+          }
+        } else {
+          if (!clientData?.length) throw new Error('Error insertando cliente');
+          clientId = clientData[0].id;
+        }
 
         const { data: deviceData, error: deviceError } = await supabase
           .from('devices')

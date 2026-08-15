@@ -18,8 +18,8 @@ export default async function handler(req, res) {
     }
 
     // Ensure phone number is formatted correctly for Twilio
-    const phoneNumber = to.toString().replace(/\D/g, ''); // Remove all non-digits
-    const toNumber = phoneNumber.length === 9 ? `+34${phoneNumber}` : `+34${phoneNumber.slice(-9)}`;
+    const cleanPhone = to.toString().replace(/\D/g, '');
+    const toNumber = cleanPhone.startsWith('34') ? `+${cleanPhone}` : `+34${cleanPhone.slice(-9)}`;
 
     const message = await client.messages.create({
       body: `Hola ${customerName}! Tu reparación ${repairId} ha sido recibida. Dispositivo: ${deviceType}. Orden: ${orderNumber}`,

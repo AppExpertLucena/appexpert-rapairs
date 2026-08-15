@@ -15,7 +15,8 @@ export default async function handler(req, res) {
     }
 
     // Generar QR code como data URL
-    const qrDataUrl = await QRCode.toDataURL(orderData.id, {
+    const qrContent = `https://reparaciones.appexpertlucena.es/?order=${orderData.id}`;
+    const qrDataUrl = await QRCode.toDataURL(qrContent, {
       errorCorrectionLevel: 'H',
       type: 'image/png',
       quality: 0.95,

@@ -1,33 +1,39 @@
-import twilio from 'twilio';
+import twilio from "twilio";
 
-const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+const client = twilio(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const { phone, message, type, orderData } = req.body;
+    const { to, customerName, repairId, deviceType, orderNumber } = req.body;
 
-    console.log('WhatsApp request received:', { phone, messageLength: message?.length });
-
-    if (!phone || !message) {
-      return res.status(400).json({ error: 'Missing phone or message' });
+    if (!to || !customerName || !repairId || !deviceType || !orderNumber) {
+      return res.status(400).json({
+        error: "Missing required fields",
+      });
     }
 
-    const formattedPhone = `whatsapp:+34${phone.replace(/\D/g, '').slice(-9)}`;
-
-    const msg = {
-      body: message,
+    const message = await client.messages.create({
+      body: `Hola ${customerName}! Tu reparación ${repairId} ha sido recibida. Dispositivo: ${deviceType}. Orden: ${orderNumber}`,
       from: process.env.TWILIO_WHATSAPP_NUMBER,
-      to: formattedPhone,
-    };
+      to: `whatsapp:+34${to}`,
+      contentSid: "HX436584f5b375c99a07a5b50701a328fd",
+    });
 
-    await client.messages.create(msg);
-    res.status(200).json({ success: true });
+    return res.status(200).json({
+      success: true,
+      messageSid: message.sid,
+    });
   } catch (error) {
-    console.error('WhatsApp error:', error);
-    res.status(500).json({ error: error.message });
+    console.error("Error sending WhatsApp message:", error);
+    return res.status(500).json({
+      error: error.message,
+    });
   }
 }

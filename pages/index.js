@@ -267,11 +267,16 @@ export default function AppExpertRepairs() {
 
         if (phone) {
           try {
-            const whatsappMessage = `¡Hola ${name}! 📱\n\nTu reparación ha sido recibida.\n\n📋 Orden: ${currentOrder.id}\n📱 Dispositivo: ${brand} ${model}\n\nTe notificaremos cuando esté lista. ¡Gracias por confiar en AppExpert! 🔧`;
             await fetch('/api/send-whatsapp', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ phone, message: whatsappMessage, type: 'order_received', orderData })
+              body: JSON.stringify({
+                to: phone.replace(/\D/g, '').slice(-9),
+                customerName: name,
+                repairId: currentOrder.id,
+                deviceType: `${brand} ${model}`,
+                orderNumber: currentOrder.id
+              })
             });
           } catch (whatsappError) {
             console.warn('WhatsApp send failed:', whatsappError);

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
+import '../styles/professional.css';
 
 const QRCode = dynamic(() => import('qrcode.react'), { ssr: false });
 
@@ -509,47 +510,44 @@ export default function AppExpertRepairs() {
 
   if (screen === 'login') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
-            <div className="bg-gradient-to-r from-slate-900 to-cyan-600 px-8 py-12 text-center">
-              <div className="inline-block bg-white rounded-full p-4 mb-4">
-                <div className="text-3xl">🔧</div>
-              </div>
-              <h1 className="text-4xl font-bold text-white mb-2">AppExpert</h1>
-              <p className="text-cyan-100">Gestión de Reparaciones</p>
+      <div className="app-container">
+        <div className="login-screen">
+          <div className="login-card">
+            <div className="login-header">
+              <div className="logo-icon">🔧</div>
+              <h1 className="login-title">AppExpert</h1>
+              <p className="login-subtitle">Gestión de Reparaciones</p>
             </div>
-            <div className="p-8 space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">👤 Nombre del Técnico</label>
-                <input
-                  ref={technicianRef}
-                  type="text"
-                  defaultValue={technician}
-                  onKeyPress={(e) => e.key === 'Enter' && (setTechnician(technicianRef.current?.value || ''), handleLogin())}
-                  placeholder="Ej: Juan García"
-                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                  autoFocus
-                />
-              </div>
-              <button
-                onClick={() => {
-                  const techValue = technicianRef.current?.value || '';
-                  if (techValue.trim().length < 2) {
-                    alert('Ingresa tu nombre (al menos 2 caracteres)');
-                    return;
-                  }
-                  setTechnician(techValue);
-                  setScreen('dashboard');
-                }}
-                className="w-full bg-gradient-to-r from-slate-900 to-cyan-600 hover:from-slate-800 hover:to-cyan-700 text-white font-bold py-3 px-4 rounded-lg transition transform hover:scale-105"
-              >
-                🚀 Entrar al Sistema
-              </button>
-              <p className="text-center text-xs text-slate-500 mt-4">
-                AppExpert Gadgets Solutions • Lucena, Córdoba
-              </p>
+            <div className="form-group">
+              <label className="form-label">👤 Nombre del Técnico</label>
+              <input
+                ref={technicianRef}
+                type="text"
+                defaultValue={technician}
+                onKeyPress={(e) => e.key === 'Enter' && (setTechnician(technicianRef.current?.value || ''), handleLogin())}
+                placeholder="Ej: Juan García"
+                className="form-input"
+                autoFocus
+              />
             </div>
+            <button
+              onClick={() => {
+                const techValue = technicianRef.current?.value || '';
+                if (techValue.trim().length < 2) {
+                  alert('Ingresa tu nombre (al menos 2 caracteres)');
+                  return;
+                }
+                setTechnician(techValue);
+                setScreen('dashboard');
+              }}
+              className="btn btn-primary"
+              style={{ width: '100%' }}
+            >
+              🚀 Entrar al Sistema
+            </button>
+            <p className="text-center text-muted" style={{ marginTop: '30px', fontSize: '12px' }}>
+              AppExpert Gadgets Solutions • Lucena, Córdoba
+            </p>
           </div>
         </div>
       </div>
@@ -752,53 +750,54 @@ export default function AppExpertRepairs() {
   if (screen === 'order' && currentOrder) {
     if (step === 0) {
       return (
-        <div className="min-h-screen bg-slate-50">
-          <header className="bg-white border-b border-slate-200 sticky top-0">
-            <div className="max-w-2xl mx-auto px-4 py-4">
-              <h1 className="text-xl font-bold text-slate-900">{currentOrder.id}</h1>
-              <p className="text-sm text-slate-500">Paso 1 de 7: Datos del cliente</p>
+        <div className="app-container" style={{ backgroundColor: 'var(--bg)' }}>
+          <div className="dashboard-container">
+            <div className="dashboard-header">
+              <div>
+                <h2 className="dashboard-title">{currentOrder.id}</h2>
+                <p className="dashboard-subtitle">Paso 1 de 7: Datos del cliente</p>
+              </div>
             </div>
-          </header>
 
-          <main className="max-w-2xl mx-auto px-4 py-8">
-            <div className="bg-white rounded-lg p-6 mb-6">
-              <h2 className="text-lg font-semibold text-slate-900 mb-6">Información del cliente</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Nombre completo</label>
+            <div className="card">
+              <h3 className="card-title mb-20" style={{ marginBottom: '24px' }}>Información del cliente</h3>
+              <div className="grid gap-20" style={{ gap: '20px' }}>
+                <div className="form-group">
+                  <label className="form-label">Nombre completo</label>
                   <input
                     ref={clientNameRef}
                     type="text"
                     defaultValue={currentOrder.client.name}
                     placeholder="ej: Juan García López"
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    className="form-input"
                     autoFocus
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Teléfono</label>
+                <div className="form-group">
+                  <label className="form-label">Teléfono</label>
                   <input
                     ref={clientPhoneRef}
                     type="tel"
                     defaultValue={currentOrder.client.phone}
                     placeholder="ej: 600 123 456"
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    className="form-input"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Email (opcional)</label>
+                <div className="form-group">
+                  <label className="form-label">Email (opcional)</label>
                   <input
                     ref={clientEmailRef}
                     type="email"
                     defaultValue={currentOrder.client.email}
                     placeholder="ej: juan@email.com"
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    className="form-input"
                   />
                 </div>
               </div>
             </div>
-            <div className="flex gap-3">
-              <button onClick={() => setScreen('dashboard')} className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition">Cancelar</button>
+
+            <div className="dashboard-actions" style={{ marginTop: '30px' }}>
+              <button onClick={() => setScreen('dashboard')} className="btn btn-secondary">← Cancelar</button>
               <button onClick={() => {
                 const inputs = document.querySelectorAll('input[type="text"], input[type="tel"], input[type="email"]');
                 const name = inputs[0]?.value || '';
@@ -810,30 +809,30 @@ export default function AppExpertRepairs() {
                 } else {
                   alert('Completa nombre y teléfono');
                 }
-              }} className="flex-1 px-4 py-2 bg-slate-900 text-white font-medium rounded-lg hover:bg-slate-800 transition">Siguiente</button>
+              }} className="btn btn-primary">Siguiente →</button>
             </div>
-          </main>
+          </div>
         </div>
       );
     }
 
     if (step === 1) {
       return (
-        <div className="min-h-screen bg-slate-50">
-          <header className="bg-white border-b border-slate-200 sticky top-0">
-            <div className="max-w-2xl mx-auto px-4 py-4">
-              <h1 className="text-xl font-bold text-slate-900">{currentOrder.id}</h1>
-              <p className="text-sm text-slate-500">Paso 2 de 7: Datos del dispositivo</p>
+        <div className="app-container" style={{ backgroundColor: 'var(--bg)' }}>
+          <div className="dashboard-container">
+            <div className="dashboard-header">
+              <div>
+                <h2 className="dashboard-title">{currentOrder.id}</h2>
+                <p className="dashboard-subtitle">Paso 2 de 7: Datos del dispositivo</p>
+              </div>
             </div>
-          </header>
 
-          <main className="max-w-2xl mx-auto px-4 py-8">
-            <div className="bg-white rounded-lg p-6 mb-6">
-              <h2 className="text-lg font-semibold text-slate-900 mb-6">Información del dispositivo</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Marca</label>
-                  <select ref={deviceBrandRef} defaultValue={currentOrder.device.brand} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
+            <div className="card">
+              <h3 className="card-title mb-20" style={{ marginBottom: '24px' }}>Información del dispositivo</h3>
+              <div className="grid gap-20" style={{ gap: '20px' }}>
+                <div className="form-group">
+                  <label className="form-label">Marca</label>
+                  <select ref={deviceBrandRef} defaultValue={currentOrder.device.brand} className="form-select">
                     <option value="">Selecciona marca</option>
                     <option>Apple iPhone</option>
                     <option>Samsung</option>
@@ -841,17 +840,17 @@ export default function AppExpertRepairs() {
                     <option>Otro</option>
                   </select>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Modelo</label>
-                  <input ref={deviceModelRef} type="text" defaultValue={currentOrder.device.model} placeholder="ej: iPhone 15 Pro" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500" autoFocus />
+                <div className="form-group">
+                  <label className="form-label">Modelo</label>
+                  <input ref={deviceModelRef} type="text" defaultValue={currentOrder.device.model} placeholder="ej: iPhone 15 Pro" className="form-input" autoFocus />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">IMEI / Nº serie</label>
-                  <input ref={deviceImeiRef} type="text" defaultValue={currentOrder.device.imei} placeholder="ej: 356938815342816" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500" />
+                <div className="form-group">
+                  <label className="form-label">IMEI / Nº serie</label>
+                  <input ref={deviceImeiRef} type="text" defaultValue={currentOrder.device.imei} placeholder="ej: 356938815342816" className="form-input" />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Estado físico</label>
-                  <select ref={deviceConditionRef} defaultValue={currentOrder.device.condition} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                <div className="form-group">
+                  <label className="form-label">Estado físico</label>
+                  <select ref={deviceConditionRef} defaultValue={currentOrder.device.condition} className="form-select">
                     <option value="">Selecciona estado</option>
                     <option>Impecable</option>
                     <option>Rayones superficiales</option>
@@ -861,8 +860,9 @@ export default function AppExpertRepairs() {
                 </div>
               </div>
             </div>
-            <div className="flex gap-3">
-              <button onClick={() => setStep(0)} className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition">Atrás</button>
+
+            <div className="dashboard-actions" style={{ marginTop: '30px' }}>
+              <button onClick={() => setStep(0)} className="btn btn-secondary">← Atrás</button>
               <button onClick={() => {
                 const selects = document.querySelectorAll('select');
                 const inputs = document.querySelectorAll('input[type="text"]');
@@ -876,9 +876,9 @@ export default function AppExpertRepairs() {
                 } else {
                   alert('Completa marca y modelo');
                 }
-              }} className="flex-1 px-4 py-2 bg-slate-900 text-white font-medium rounded-lg hover:bg-slate-800 transition">Siguiente</button>
+              }} className="btn btn-primary">Siguiente →</button>
             </div>
-          </main>
+          </div>
         </div>
       );
     }

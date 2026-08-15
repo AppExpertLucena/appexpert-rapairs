@@ -33,10 +33,6 @@ export default function AppExpertRepairs() {
   const diagnosisRef = useRef(null);
   const pinRef = useRef(null);
 
-  useEffect(() => {
-    loadOrders();
-  }, []);
-
   const loadOrders = async () => {
     try {
       setLoading(true);
@@ -54,6 +50,10 @@ export default function AppExpertRepairs() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadOrders();
+  }, []);
 
   const handleLogin = () => {
     if (technician.trim()) {

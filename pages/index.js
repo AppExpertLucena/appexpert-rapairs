@@ -271,7 +271,7 @@ export default function AppExpertRepairs() {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                to: phone.replace(/\D/g, '').slice(-9),
+                to: phone.startsWith('+') ? phone : '+34' + phone.replace(/\D/g, ''),
                 customerName: name,
                 repairId: currentOrder.id,
                 deviceType: `${brand} ${model}`,

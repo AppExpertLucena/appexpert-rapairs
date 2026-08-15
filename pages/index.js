@@ -627,64 +627,69 @@ export default function AppExpertRepairs() {
     }
 
     return (
-      <div className="min-h-screen bg-slate-50">
-        <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
-          <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="app-container" style={{ backgroundColor: 'var(--bg)', minHeight: '100vh' }}>
+        <div className="dashboard-container" style={{ paddingTop: '0', paddingBottom: '40px' }}>
+          {/* Header */}
+          <div style={{ background: 'white', padding: '24px', borderRadius: '0', boxShadow: 'var(--shadow)', marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">AppExpert</h1>
-              <p className="text-sm text-slate-500">Hola, {technician}</p>
+              <h1 style={{ fontSize: '28px', fontWeight: 700, color: 'var(--primary)', marginBottom: '4px' }}>AppExpert</h1>
+              <p style={{ fontSize: '14px', color: 'var(--text-light)' }}>Hola, <strong>{technician}</strong></p>
             </div>
             <button
               onClick={() => {
                 setTechnician('');
                 setScreen('login');
               }}
-              className="text-sm text-slate-600 hover:text-slate-900"
+              className="btn btn-secondary"
             >
               Salir
             </button>
           </div>
-        </header>
 
-        <main className="max-w-4xl mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          {/* Acciones */}
+          <div className="dashboard-actions" style={{ marginBottom: '32px', gap: '16px', display: 'flex' }}>
             <button
               onClick={startNewOrder}
-              className="bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-700 text-white font-semibold py-4 px-6 rounded-lg transition text-lg"
+              className="btn btn-primary"
+              style={{ flex: 1, padding: '16px 24px', fontSize: '16px' }}
             >
               + Nueva orden
             </button>
             <button
               onClick={() => setShowSearch(!showSearch)}
-              className="bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-700 hover:to-cyan-600 text-white font-semibold py-4 px-6 rounded-lg transition text-lg"
+              className="btn btn-accent"
+              style={{ flex: 1, padding: '16px 24px', fontSize: '16px' }}
             >
               🔍 Buscar dispositivo
             </button>
           </div>
 
+          {/* Search */}
           {showSearch && (
-            <div className="bg-white rounded-lg border border-slate-200 p-6 mb-8">
-              <h2 className="text-lg font-bold text-slate-900 mb-4">Buscar orden</h2>
+            <div className="card" style={{ marginBottom: '32px' }}>
+              <h3 className="card-title" style={{ marginBottom: '16px' }}>Buscar orden</h3>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder="IMEI, teléfono, nombre o número de orden..."
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 mb-4"
+                className="form-input"
                 autoFocus
+                style={{ marginBottom: '16px' }}
               />
-
               {searchQuery && searchResults.length > 0 && (
-                <div className="space-y-3">
-                  <p className="text-sm text-slate-600 font-medium">{searchResults.length} resultado(s)</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <p style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text)' }}>{searchResults.length} resultado(s)</p>
                   {searchResults.map((order) => (
                     <div
                       key={order.id}
                       onClick={() => setSelectedOrder(order)}
-                      className="bg-slate-50 rounded-lg p-4 border border-slate-200 hover:bg-slate-100 cursor-pointer"
+                      style={{ background: 'var(--bg)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', cursor: 'pointer', transition: 'all 0.3s ease' }}
+                      onMouseEnter={(e) => e.currentTarget.style.boxShadow = 'var(--shadow)'}
+                      onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}
                     >
-                      <p className="font-semibold text-slate-900">{order.id}</p>
-                      <p className="text-sm text-slate-600 mt-1">{order.client.name} • {order.device.brand}</p>
+                      <p style={{ fontWeight: '600', color: 'var(--primary)', marginBottom: '4px' }}>{order.id}</p>
+                      <p style={{ fontSize: '13px', color: 'var(--text-light)' }}>{order.client.name} • {order.device.brand}</p>
                     </div>
                   ))}
                 </div>
@@ -692,47 +697,68 @@ export default function AppExpertRepairs() {
             </div>
           )}
 
-          <div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-6 text-white">
-                <p className="text-blue-100 text-sm font-semibold">Total de Órdenes</p>
-                <p className="text-4xl font-bold mt-2">{orders.length}</p>
-              </div>
-              <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg p-6 text-white">
-                <p className="text-green-100 text-sm font-semibold">Completadas</p>
-                <p className="text-4xl font-bold mt-2">{orders.filter(o => o.status === 'completed').length}</p>
-              </div>
-              <div className="bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-lg p-6 text-white">
-                <p className="text-cyan-100 text-sm font-semibold">Pendientes</p>
-                <p className="text-4xl font-bold mt-2">{orders.filter(o => o.status !== 'completed').length}</p>
-              </div>
+          {/* Estadísticas */}
+          <div className="grid grid-3" style={{ marginBottom: '32px' }}>
+            <div className="stat-box">
+              <div className="stat-value">{orders.length}</div>
+              <div className="stat-label">Total de Órdenes</div>
             </div>
+            <div className="stat-box">
+              <div className="stat-value">{orders.filter(o => o.status === 'completed').length}</div>
+              <div className="stat-label">Completadas</div>
+            </div>
+            <div className="stat-box">
+              <div className="stat-value">{orders.filter(o => o.status !== 'completed').length}</div>
+              <div className="stat-label">Pendientes</div>
+            </div>
+          </div>
 
-            <h2 className="text-xl font-bold text-slate-900 mb-4">Órdenes ({orders.length})</h2>
+          {/* Órdenes */}
+          <div>
+            <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--primary)', marginBottom: '20px' }}>Órdenes ({orders.length})</h2>
             {orders.length === 0 ? (
-              <div className="bg-white rounded-lg border border-slate-200 p-8 text-center">
-                <p className="text-slate-500">Sin órdenes aún. Crea la primera.</p>
+              <div className="card" style={{ textAlign: 'center', padding: '48px 24px' }}>
+                <p style={{ color: 'var(--text-light)', fontSize: '16px' }}>Sin órdenes aún. Crea la primera.</p>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {orders.map((order) => (
                   <div
                     key={order.id}
-                    className="bg-white rounded-lg border border-slate-200 p-4 hover:shadow-md flex justify-between items-center"
+                    style={{
+                      background: 'white',
+                      borderRadius: '8px',
+                      border: '1px solid var(--border)',
+                      padding: '16px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.boxShadow = 'var(--shadow)';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.boxShadow = 'none';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                    }}
                   >
                     <div
                       onClick={() => setSelectedOrder(order)}
-                      className="cursor-pointer flex-1"
+                      style={{ flex: 1 }}
                     >
-                      <p className="font-semibold text-slate-900">{order.id}</p>
-                      <p className="text-sm text-slate-600 mt-1">{order.client.name}</p>
+                      <p style={{ fontWeight: '600', color: 'var(--primary)', marginBottom: '4px' }}>{order.id}</p>
+                      <p style={{ fontSize: '13px', color: 'var(--text-light)' }}>{order.client.name}</p>
                     </div>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handlePrintLabel(order);
                       }}
-                      className="ml-4 px-3 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm rounded-lg hover:shadow-lg transition-all whitespace-nowrap"
+                      className="btn btn-small"
+                      style={{ marginLeft: '16px' }}
                     >
                       🖨️ Imprimir
                     </button>
@@ -741,7 +767,7 @@ export default function AppExpertRepairs() {
               </div>
             )}
           </div>
-        </main>
+        </div>
       </div>
     );
   }

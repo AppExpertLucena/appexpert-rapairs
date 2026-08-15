@@ -1,8 +1,14 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run build && echo 'BUILD_TIMESTAMP=$(date)' > .build-info",
   "outputDirectory": ".next",
+  "publicSource": "./public",
+  "functions": {
+    "pages/api/**/*.js": {
+      "maxDuration": 60
+    }
+  },
   "env": {
-    "BUILD_ID": "2026-08-15-force-rebuild"
+    "FORCE_BUILD": "2026-08-15-14-30-NUCLEAR"
   },
   "headers": [
     {
@@ -10,9 +16,14 @@
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate"
+          "value": "no-cache, no-store, must-revalidate, max-age=0"
+        },
+        {
+          "key": "Pragma",
+          "value": "no-cache"
         }
       ]
     }
-  ]
+  ],
+  "redirects": []
 }

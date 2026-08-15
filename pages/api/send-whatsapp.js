@@ -19,11 +19,12 @@ export default async function handler(req, res) {
       });
     }
 
+    const messageBody = `Hola ${customerName}! Tu reparación ${repairId} ha sido recibida. Dispositivo: ${deviceType}. Orden: ${orderNumber}`;
+
     const message = await client.messages.create({
-      body: `Hola ${customerName}! Tu reparación ${repairId} ha sido recibida. Dispositivo: ${deviceType}. Orden: ${orderNumber}`,
+      body: messageBody,
       from: process.env.TWILIO_WHATSAPP_NUMBER,
-      to: `whatsapp:+34${to}`,
-      contentSid: "HX436584f5b375c99a07a5b50701a328fd",
+      to: `whatsapp:${to}`,
     });
 
     return res.status(200).json({
@@ -31,7 +32,7 @@ export default async function handler(req, res) {
       messageSid: message.sid,
     });
   } catch (error) {
-    console.error("Error sending WhatsApp message:", error);
+    console.error("Error:", error.message);
     return res.status(500).json({
       error: error.message,
     });
